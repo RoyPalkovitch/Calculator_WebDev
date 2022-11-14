@@ -70,11 +70,14 @@
   }
 
   function equal() {
+    if (num_2 === ''){
+      return;
+    }
     math_operation();
     let temp = '';
     if (current_result < 0){
       is_negative = false;
-      temp = change_negative_state((current_result*-1).toString())
+      temp = change_negative_state((current_result*-1).toString());
     }else{
     temp = current_result.toString();}
     clear();
@@ -252,11 +255,14 @@
   }
 
   function update_history(){
+    if (num_2 === ''){
+      return;
+    }
     calc_history.push(num_1 + operation + num_2 + '=' + current_result);
-    for (let i = 0; i < history.length; i++){
+    
       let elem = document.createElement("div");
       elem.innerText = calc_history[calc_history.length-1];
       document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
-    }
+    
     
   }

@@ -17,12 +17,12 @@
 
   #scientific, #history{
     width:233px;
-    min-height: 400px;
+    min-height: auto;
     align-items: flex-start;
   }
 
-  #history .col, #scientific .col {
-    min-height: 400px;
+  #history > .container > .col, #scientific > .container >  .col {
+    min-height: auto;
   }
 
 

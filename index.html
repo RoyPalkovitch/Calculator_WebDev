@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/mobile_style.css">
   <link rel="stylesheet" href="/dark_style.css">
-  <script src="/application.js"></script>
 
 
 </head>
@@ -39,7 +38,7 @@
         </div>
         <div id="clear" class="col" onclick="calculator('clear')" style="font-weight: bold;">C</div>
         <div class="row">
-          <div class="col" onclick="calculator('num','7')">7</div>
+          <div class="col" onclick="calculator('num','7')" >7</div>
           <div class="col" onclick="calculator('num','8')">8</div>
           <div class="col" onclick="calculator('num','9')">9</div>
         </div>
@@ -82,7 +81,7 @@
   <div id="history">
     <section class="container text-center">
       <div class="col">
-        
+        <div class="col top">Operation Log</div>
       </div>
     </section>
   </div>
@@ -90,6 +89,7 @@
 </body>
 
 <script src="/calculator.js"></script>
+<script src="/application.js"></script>
 
 
 </html>

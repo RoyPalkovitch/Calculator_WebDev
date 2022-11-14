@@ -27,3 +27,4 @@ function toggle(tag, should_active) {
     }
   }
 }
+

@@ -7,6 +7,7 @@
   let is_float = false; // is number floating point
   let operation = ''; //if operation
   let current_result = NaN;
+  let calc_history = [];
   function calculator(type, value) {
 
     switch (type) {
@@ -78,8 +79,8 @@
     temp = current_result.toString();}
     clear();
     display.innerHTML = temp;
-    num_1 = temp.toString();
-    current_result = temp;
+    num_1 = '0';
+    current_result = 0;
   }
 
   function clear() {
@@ -90,7 +91,7 @@
     is_float = false;
     operation = '';
     current_result = NaN;
-
+    calc_history = [];
   }
 
   function back() {
@@ -247,6 +248,15 @@
           break;
 
       }
-    
+      update_history();
+  }
 
+  function update_history(){
+    calc_history.push(num_1 + operation + num_2 + '=' + current_result);
+    for (let i = 0; i < history.length; i++){
+      let elem = document.createElement("div");
+      elem.innerText = calc_history[calc_history.length-1];
+      document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
+    }
+    
   }

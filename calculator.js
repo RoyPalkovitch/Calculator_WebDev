@@ -183,7 +183,8 @@
 
         num_1 = current_result.toString();
       }
-      display.innerHTML += operation;
+      //display.innerHTML += operation;
+      display.innerHTML =num_1 + operation;
       is_float = false;
       is_negative = false;
       num_2 = '';

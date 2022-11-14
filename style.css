@@ -1,12 +1,49 @@
+body{
+  display: grid;
+  grid-template-areas: 'history main scientific';
+  grid-template-columns: 150px 500px 150px;
+  grid-template-rows: 600px;
+  width: 100%;
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+}
+
+#history{
+  grid-area: history;
+  width: 150px;
+  display: none;
+  align-items: center;
+  min-height: 600px ;
+}
+
+#history .col, #scientific .col {
+  height: 307px;
+}
+
+#scientific{
+  grid-area: scientific;
+  width: 150px;
+  display: none;
+  align-items: center;
+  min-height: 600px ;
+}
+
+.active{
+  background: yellow!important;
+}
+
+
 #main{
+  width: 500px;
+  grid-area: main;
   margin:auto;
   display: grid;
   grid-template-areas: 
   'left center right';
   grid-template-columns: 0.8fr 4fr 0.8fr;
-  max-width: 650px;
   align-items: center;
-  min-height: 500px ;
+  min-height: 600px ;
 }
 #left{
   grid-area: left;
@@ -62,3 +99,5 @@
   padding: 5px !important;
   height: 36px !important;
 }
+
+

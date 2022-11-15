@@ -166,12 +166,12 @@
     }
   }
 
-  function add_operation(value) {
-    if (num_2 === '') {
-      if (operation === '') {
+  function add_operation(value) {// adding the operator
+    if (num_2 === '') { //if not num2 we just add the operator
+      if (operation === '') {//if there is no operator
         operation = value;
-        display.innerHTML += operation;
-        is_float = false;
+        display.innerHTML += operation;//display the operator
+        is_float = false;//getting ready for num2
         is_negative = false;
       } else {
         display.innerHTML = display.innerHTML.slice(0, display.innerHTML.indexOf(num_1[num_1.length - 1]) + 1) + value + num_2;
@@ -198,24 +198,24 @@
   function math_operation() {
     let val_1 = 0;
     let val_2 = 0;
-    if (num_1.includes('-')) {
+    if (num_1.includes('-')) {//if string is negative
       is_negative = true;
-      num_1 = change_negative_state(num_1);
-      if (num_1.includes('.')) {
+      num_1 = change_negative_state(num_1); //remove negative string
+      if (num_1.includes('.')) {//if floats
         val_1 = parseFloat(num_1) * -1;
       } else {
         val_1 = parseInt(num_1) * -1;
       }
-      num_1 = change_negative_state(num_1);
+      num_1 = change_negative_state(num_1); // return to negative string
     }
     else {
-      if (num_1.includes('.')) {
+      if (num_1.includes('.')) { // not negative but if floats
         val_1 = parseFloat(num_1);
       } else {
         val_1 = parseInt(num_1);
       }
     }
-    if (num_2.includes('-')) {
+    if (num_2.includes('-')) { //same for number 2
       is_negative = true;
 
       num_2 = change_negative_state(num_2);
@@ -234,7 +234,7 @@
       }
     }
 
-      switch (operation) {
+      switch (operation) { // calculation
         case '+':
           current_result = (val_1 + val_2);
           break;
@@ -254,6 +254,7 @@
       update_history();
   }
 
+  //if a calculation happend save and display to history window
   function update_history(){
     if (num_2 === ''){
       return;

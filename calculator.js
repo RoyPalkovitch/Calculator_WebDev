@@ -1,18 +1,19 @@
   //Iniziallize param
   const display = document.getElementById('display');
+  const err = 'Error'
   display.innerHTML = '0';
   let num_1 = '0';//first number displayed
   let num_2 = '';//second number displayed
   let is_negative = false; //negative state
   let is_float = false; // is number floating point
-  let operation = ''; //if operation
+  let operator = ''; //if operation
   let current_result = NaN;
   let calc_history = [];
   function calculator(type, value) {
 
     switch (type) {
       case 'num':
-        if (operation == '') {
+        if (operator == '') {
           if (is_negative) {
             num_1 = change_negative_state(num_1);
             num_1 = show(num_1, value);
@@ -30,12 +31,12 @@
           } else {
             num_2 = show(num_2, value);
           }
-          display.innerHTML = num_1 + operation + num_2;
+          display.innerHTML = num_1 + operator + num_2;
         }
         break;
 
       case 'negative_state':
-        if (operation == '') {
+        if (operator == '') {
           num_1 = change_negative_state(num_1);
           display.innerHTML = num_1;
 
@@ -44,12 +45,12 @@
             num_2 = 0;
           }
           num_2 = change_negative_state(num_2);
-          display.innerHTML = num_1 + operation + num_2;
+          display.innerHTML = num_1 + operator + num_2;
         }
         break;
 
-      case 'operation':
-        add_operation(value)
+      case 'operator':
+        add_operator(value)
         break;
 
       case 'back':
@@ -70,7 +71,7 @@
   }
 
   function equal() {
-    if (num_2 === ''){
+    if (num_2 === '' || zero_division()){
       return;
     }
     math_operation();
@@ -82,8 +83,7 @@
     temp = current_result.toString();}
     clear();
     display.innerHTML = temp;
-    num_1 = '0';
-    current_result = 0;
+
   }
 
   function clear() {
@@ -92,13 +92,15 @@
     num_2 = '';
     is_negative = false;
     is_float = false;
-    operation = '';
+    operator = '';
     current_result = NaN;
     calc_history = [];
+    current_result = 0;
+
   }
 
   function back() {
-    if (operation == '') {
+    if (operator == '') {
       if (num_1.includes('-')) {
         is_negative = true;
         num_1 = change_negative_state(num_1);
@@ -117,25 +119,25 @@
         }
         display.innerHTML = num_1;
       }
-    } else if (operation !== '' && num_2 === '') {
+    } else if (operator !== '' && num_2 === '') {
       display.innerHTML = num_1;
-      operation = '';
+      operator = '';
     }
     else {
       if (is_negative) {
         num_2 = change_negative_state(num_2);
         num_2 = num_2.slice(0, num_2.length - 1);
         if (num_2 === '') {
-          display.innerHTML = num_1 + operation + num_2;
+          display.innerHTML = num_1 + operator + num_2;
           return;
         }
         num_2 = change_negative_state(num_2);
-        display.innerHTML = num_1 + operation + num_2;
+        display.innerHTML = num_1 + operator + num_2;
 
       } else {
         num_2 = num_2.slice(0, num_2.length - 1);
 
-        display.innerHTML = num_1 + operation + num_2;
+        display.innerHTML = num_1 + operator + num_2;
       }
     }
   }
@@ -166,20 +168,26 @@
     }
   }
 
-  function add_operation(value) {// adding the operator
+  function add_operator(value) {// adding the operator
     if (num_2 === '') { //if not num2 we just add the operator
-      if (operation === '') {//if there is no operator
-        operation = value;
-        display.innerHTML += operation;//display the operator
+      if (display.innerHTML === err){
+        return;
+      }
+      if (operator === '') {//if there is no operator
+        operator = value;
+        display.innerHTML += operator;//display the operator
         is_float = false;//getting ready for num2
         is_negative = false;
       } else {
         display.innerHTML = display.innerHTML.slice(0, display.innerHTML.indexOf(num_1[num_1.length - 1]) + 1) + value + num_2;
-        operation = value
+        operator = value
       }
     } else {
+      if(zero_division()){
+        return;
+      }
       math_operation();
-      operation = value;
+
       if (current_result < 0) {
         is_negative = false;
         num_1 = change_negative_state((current_result * -1).toString());
@@ -188,7 +196,9 @@
         num_1 = current_result.toString();
       }
       //display.innerHTML += operation;
-      display.innerHTML =num_1 + operation;
+
+      operator = value
+      display.innerHTML =num_1 + operator;
       is_float = false;
       is_negative = false;
       num_2 = '';
@@ -198,6 +208,7 @@
   function math_operation() {
     let val_1 = 0;
     let val_2 = 0;
+
     if (num_1.includes('-')) {//if string is negative
       is_negative = true;
       num_1 = change_negative_state(num_1); //remove negative string
@@ -234,7 +245,7 @@
       }
     }
 
-      switch (operation) { // calculation
+      switch (operator) { // calculation
         case '+':
           current_result = (val_1 + val_2);
           break;
@@ -254,12 +265,21 @@
       update_history();
   }
 
+  function zero_division(){
+    if((num_2 === '0' || num_2 === '(-0)') && operator == '/'){
+      clear();
+      display.innerHTML = err;
+      return true;
+    }
+    return false;
+  }
+
   //if a calculation happend save and display to history window
   function update_history(){
     if (num_2 === ''){
       return;
     }
-    calc_history.push(num_1 + operation + num_2 + '=' + current_result);
+    calc_history.push(num_1 + operator + num_2 + '=' + current_result);
     
       let elem = document.createElement("div");
       elem.innerText = calc_history[calc_history.length-1];

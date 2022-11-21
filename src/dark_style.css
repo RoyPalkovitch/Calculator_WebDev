@@ -1,0 +1,34 @@
+body.dark{
+  background-color: #2d3441;
+  color:white;
+}
+
+
+body.dark .col{
+  background-color: #3d3b3b ;
+}
+
+body.dark #center > .col > .row > .col{
+  background-color: #707681;
+  font-weight: bold;
+}
+
+
+body.dark .col > .row :hover, 
+body.dark #left .col > .col:hover,
+body.dark #right .col > .col:hover,
+body.dark #clear:hover
+{
+  background-color: #382222 !important;
+}
+
+body.dark #left .col > .col.nothing:hover{
+  background-color: #3d3b3b !important;
+  cursor: auto;
+
+}
+
+body.dark .active{
+  background: #382222 !important;
+  
+}

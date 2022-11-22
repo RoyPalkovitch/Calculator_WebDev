@@ -22,13 +22,13 @@
   <div id="main">
     <section id="left" class="container text-center">
       <div class="col">
-        <div id="show-info" class="col top" onclick="info()"><img src="/src/icons/info.svg"/></div>
-        <div id="color-mode" class="col" onclick="toggle_theme()"><img src="/src/icons/light.svg"/></div>
-        <div id="show-history" class="col" onclick="toggle(this,true)"><img src="/src/icons/history.svg" alt=""></div>
-        <div id="show-scientific" class="col" onclick="toggle(this,true)"><img src="/src/icons/nthRoot.svg" alt=""></div>
-        <div id="remote-calc" class="col" onclick="toggle(this)"><img src="/src/icons/cloud.png" alt=""></div>
-        <div id="" class="col nothing"></div>
-        <div id="" class="col nothing"></div>
+        <div id="show-info"  class="col top" ><img src="/src/icons/info.svg"/></div>
+        <div id="light-mode" class="col" ><img src="/src/icons/light.svg"/></div>
+        <div id="show-history" class="col" ><img src="/src/icons/history.svg" alt=""></div>
+        <div id="show-scientific" class="col" ><img src="/src/icons/nthRoot.svg" alt=""></div>
+        <div id="remote-calc" class="col" ><img src="/src/icons/cloud.png" alt=""></div>
+        <div class="col nothing"></div>
+        <div class="col nothing"></div>
       </div>
     </section>
     <section id="center" class="container text-center">
@@ -38,24 +38,24 @@
         </div>
         <div id="clear" class="col" onclick="calculator('clear')" style="font-weight: bold;">C</div>
         <div class="row">
-          <div class="col" onclick="calculator('num','7')" >7</div>
-          <div class="col" onclick="calculator('num','8')">8</div>
-          <div class="col" onclick="calculator('num','9')">9</div>
+          <div class="col" >7</div>
+          <div class="col">8</div>
+          <div class="col">9</div>
         </div>
         <div class="row">
-          <div class="col" onclick="calculator('num','4')">4</div>
-          <div class="col" onclick="calculator('num','5')">5</div>
-          <div class="col" onclick="calculator('num','6')">6</div>
+          <div class="col">4</div>
+          <div class="col">5</div>
+          <div class="col">6</div>
         </div>
         <div class="row">
-          <div class="col" onclick="calculator('num','1')">1</div>
-          <div class="col" onclick="calculator('num','2')">2</div>
-          <div class="col" onclick="calculator('num','3')">3</div>
+          <div class="col">1</div>
+          <div class="col" >2</div>
+          <div class="col">3</div>
         </div>
         <div class="row">
-          <div class="col" onclick="calculator('negative_state')">±</div>
-          <div class="col" onclick="calculator('num','0')">0</div>
-          <div class="col" onclick="calculator('num','.')">.</div>
+          <div class="col" id="negative_state" >±</div>
+          <div class="col" >0</div>
+          <div class="col" >.</div>
         </div>
       </div>
     </section>

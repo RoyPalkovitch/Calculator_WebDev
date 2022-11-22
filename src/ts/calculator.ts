@@ -23,7 +23,7 @@ function calculator(type: string, value: string) {
         }
         display.innerHTML = num_1;
       } else {
-        if (!num_2){
+        if (!num_2) {
           num_2 = '0';
         }
         if (num_2.includes('-')) {
@@ -36,18 +36,18 @@ function calculator(type: string, value: string) {
         display.innerHTML = num_1 + operator + num_2;
       }
       break;
-    
+
     case 'float':
-      if(num_1 && !num_2)
-    break;
-    
+      if (num_1 && !num_2)
+        break;
+
     case 'negative_state':
       if (!operator) {
         num_1 = change_negative_state(num_1);
         display.innerHTML = num_1;
 
       } else {
-        if (num_2 === '') {
+        if (!num_2) {
           num_2 = '0';
         }
         num_2 = change_negative_state(num_2);
@@ -77,7 +77,7 @@ function calculator(type: string, value: string) {
 }
 
 function equal() {
-  if (num_2 === '' || zero_division()) {
+  if (!num_2 || zero_division()) {
     return;
   }
   math_operation();
@@ -105,12 +105,12 @@ function clear() {
 }
 
 function back() {
-  if (operator == '') {
+  if (!operator) {
     if (num_1.includes('-')) {
       num_1 = change_negative_state(num_1);
 
       num_1 = num_1.slice(0, num_1.length - 1);
-      if (num_1 == '') {
+      if (!num_1) {
         num_1 = '0';
         display.innerHTML = num_1;
         return;
@@ -125,14 +125,14 @@ function back() {
       }
       display.innerHTML = num_1;
     }
-  } else if ((operator || waitingNextOper) && num_2 === '') {
-    if(waitingNextOper){  
+  } else if ((operator || waitingNextOper) && !num_2) {
+    if (waitingNextOper) {
       num_2 = num_1.split(waitingNextOper)[1];
       num_1 = num_1.split(waitingNextOper)[0];
       operator = waitingNextOper;
       waitingNextOper = '';
       display.innerHTML = num_1 + operator + num_2;
-    }else{
+    } else {
       operator = '';
       display.innerHTML = num_1;
     }
@@ -142,7 +142,7 @@ function back() {
       num_2 = change_negative_state(num_2);
 
       num_2 = num_2.slice(0, num_2.length - 1);
-      if (num_2 === '') {
+      if (!num_2) {
         display.innerHTML = num_1 + operator + num_2;
         return;
       }
@@ -185,13 +185,13 @@ function show(num: string, x: string) {
 }
 
 function add_operator(value: string) {// adding the operator
-  if (num_2 === '') { //if not num2 we just add the operator
+  if (!num_2) { //if not num2 we just add the operator
     if (display.innerHTML === err) {
       return;
     }
-    if (operator === '') {//if there is no operator
+    if (!operator) {//if there is no operator
       operator = value;
-      display.innerHTML =num_1 + operator;//display the operator
+      display.innerHTML = num_1 + operator;//display the operator
     } else {
       display.innerHTML = display.innerHTML.slice(0, display.innerHTML.indexOf(num_1[num_1.length - 1]) + 1) + value;
       operator = value
@@ -201,15 +201,15 @@ function add_operator(value: string) {// adding the operator
     if (zero_division()) {
       return;
     }
-    if(science){
-      if(!waitingNextOper){
+    if (science) {
+      if (!waitingNextOper) {
         waitingNextOper = operator;
         num_1 = num_1 + operator + num_2;
         num_2 = '';
         operator = value;
         display.innerHTML = num_1 + value;
         return;
-      } else{
+      } else {
         math_operation();
         if (current_result < 0) {
           num_1 = change_negative_state((current_result * -1).toString());
@@ -232,7 +232,7 @@ function add_operator(value: string) {// adding the operator
   }
 }
 
-function resetAfterOper(value: string){
+function resetAfterOper(value: string) {
   operator = value;
   waitingNextOper = '';
   display.innerHTML = num_1 + operator;
@@ -242,13 +242,13 @@ function resetAfterOper(value: string){
 
 
 function math_operation() {
-    let num: string[] = num_1.split(waitingNextOper);
-    if(science && (waitingNextOper !== '*' && waitingNextOper !== '/') && (operator === '*' || operator === '/')){
-      current_result = parseFloat(eval(num[0]+ waitingNextOper + eval(num[1] + operator + num_2)));
-    }else{
-      current_result = parseFloat(eval(num_1 + operator + num_2));
-    }
-  
+  let num: string[] = num_1.split(waitingNextOper);
+  if (science && (waitingNextOper !== '*' && waitingNextOper !== '/') && (operator === '*' || operator === '/')) {
+    current_result = parseFloat(eval(num[0] + waitingNextOper + eval(num[1] + operator + num_2)));
+  } else {
+    current_result = parseFloat(eval(num_1 + operator + num_2));
+  }
+
   update_history();
 }
 
@@ -263,7 +263,7 @@ function zero_division() {
 
 //if a calculation happend save and display to history window
 function update_history() {
-  if (num_2 === '') {
+  if (!num_2) {
     return;
   }
   calc_history.push(num_1 + operator + num_2 + '=' + current_result);

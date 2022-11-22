@@ -93,7 +93,7 @@ function info() {
   alert('Developer: Roy Palkovitch\nVersion: 0.01\n Calculator for WebDev program');
 }
 
-function toggle_theme(tag) {
+function toggle_theme(tag: Element) {
   document.getElementById('display').classList.toggle('active');
   tag.classList.toggle('active');
 }

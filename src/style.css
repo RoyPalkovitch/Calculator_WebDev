@@ -24,14 +24,18 @@ body{
 
 #scientific{
   grid-area: scientific;
+  display: flex;
+  flex-direction: column;
   width: 150px;
   display: none;
   align-items: center;
   min-height: 600px ;
 }
 
-.active{
+
+.active, #display.active{
   background: yellow!important;
+  color:black;
 }
 
 
@@ -80,6 +84,7 @@ body{
 .col > .row :hover, 
 #left .col > .col:hover,
 #right .col > .col:hover,
+#scientific .row > .col:hover,
 #clear:hover
 {
   cursor: pointer;
@@ -92,6 +97,17 @@ body{
   height: 45px;
   padding: 10px;
 }
+
+#scientific > section{
+  height: 308px;
+  display: flex;
+  flex-direction: column;
+}
+
+#scientific .col{
+  height: 60px;
+}
+
 #display{
   height: 46px;
   border: 3px solid black

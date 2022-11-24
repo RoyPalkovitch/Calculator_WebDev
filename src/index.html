@@ -15,18 +15,17 @@
   <link rel="stylesheet" href="/src/mobile_style.css">
   <link rel="stylesheet" href="/src/dark_style.css">
 
-
 </head>
 
 <body>
   <div id="main">
     <section id="left" class="container text-center">
       <div class="col">
-        <div id="show-info"  class="col top" ><img src="/src/icons/info.svg"/></div>
-        <div id="light-mode" class="col" ><img src="/src/icons/light.svg"/></div>
-        <div id="show-history" class="col" ><img src="/src/icons/history.svg" alt=""></div>
-        <div id="show-scientific" class="col" ><img src="/src/icons/nthRoot.svg" alt=""></div>
-        <div id="remote-calc" class="col" ><img src="/src/icons/cloud.png" alt=""></div>
+        <div id="show-info" class="col top"><img src="/src/icons/info.svg" /></div>
+        <div id="light-mode" class="col"><img src="/src/icons/light.svg" /></div>
+        <div id="show-history" class="col"><img src="/src/icons/history.svg" alt=""></div>
+        <div id="show-scientific" class="col"><img src="/src/icons/nthRoot.svg" alt=""></div>
+        <div id="remote-calc" class="col"><img src="/src/icons/cloud.png" alt=""></div>
         <div class="col nothing"></div>
         <div class="col nothing"></div>
       </div>
@@ -36,9 +35,9 @@
         <div class="col top">My calculator</div>
         <div id="display" class="col">
         </div>
-        <div id="clear" class="col"  style="font-weight: bold;">C</div>
+        <div id="clear" class="col" style="font-weight: bold;">C</div>
         <div class="row">
-          <div class="col" >7</div>
+          <div class="col">7</div>
           <div class="col">8</div>
           <div class="col">9</div>
         </div>
@@ -49,19 +48,21 @@
         </div>
         <div class="row">
           <div class="col">1</div>
-          <div class="col" >2</div>
+          <div class="col">2</div>
           <div class="col">3</div>
         </div>
         <div class="row">
-          <div class="col" id="negative_state" >±</div>
-          <div class="col" >0</div>
-          <div class="col" >.</div>
+          <div class="col" id="negative_state">±</div>
+          <div class="col">0</div>
+          <div class="col">.</div>
         </div>
       </div>
     </section>
     <section id="right" class="container text-center">
       <div class="col">
-        <a href="/src/config.html"><div class="col top"><img src="/src/icons/settings.svg" alt=""></div></a>
+        <a href="/src/config.html">
+          <div class="col top"><img src="/src/icons/settings.svg" alt=""></div>
+        </a>
         <div class="col"><img src="/src/icons/back.svg" alt=""></div>
         <div class="col">/</div>
         <div class="col">*</div>
@@ -73,23 +74,22 @@
   </div>
   <div id="scientific">
     <section class="container text-center">
-
-      <div class="row">
-        <div class="col top">Operation Log</div>
+      <div class="col">
+          <div class="col col-large">Operation Log</div>
+        <div class="row">
+          <div class="col" onclick="sciOperator('square')" >x^2</div>
+          <div class="col" onclick="sciOperator('sqroot')">sqrt2</div>
+        </div>
+        <div class="row">
+          <div class="col" onclick="sciOperator('addSci','^')">x^</div>
+          <div class="col" onclick="sciOperator('addSci','root')">rt</div>
+        </div>
+        <div class="row">
+          <div class="col" onclick="calculator('operator', '%')">%</div>
+          <div class="col" onclick="calculator('num', 'Math.PI');">π</div>
+        </div>
+          <div class="col col-large">Operation Log</div>
       </div>
-      <div class="col"></div>
-      <div class="row">
-        <div class="col">x^2</div>
-        <div class="col">sqrt2</div>
-      </div>
-      <div class="row">
-        <div class="col">x^2</div>
-        <div class="col">sqrt2</div>
-      </div>      <div class="row">
-        <div class="col">x^2</div>
-        <div class="col">sqrt2</div>
-      </div>
-
     </section>
   </div>
   <div id="history">
@@ -101,7 +101,6 @@
   </div>
 
 </body>
-
 <script src="/src/js/calculator.js"></script>
 <script src="/src/js/application.js"></script>
 

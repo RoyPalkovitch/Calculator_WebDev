@@ -1,59 +1,73 @@
-//Iniziallize param
+
 const display: Element = document.getElementById('display');
-const err: string = 'Error';
+const ERR: string = 'Error';
 display.innerHTML = '0';
+let remote = false;
 let num_1: string = '0';//first number displayed
-let num_2: string = '';//second number displayed
-let operator: string = ''; //if operation
-let operator_sience: string = ''; //if operation
-let waitingNextOper: string = '';
-let current_result: number = NaN;
+
+const operators: { '*': string, '/': string, '-': string, '+': string, '%':string } = {
+  '*': '*',
+  '/': '/',
+  '-': '-',
+  '+': '+',
+  '%': '%'
+};
+
+const sciOperators: { '^': string, 'root': string } = {
+  '^': '^',
+  'root': 'root'
+};
+
+
+let num_2 = '';
+let sciOper = '';
+let operCount: number = 0;
+
 let calc_history: string[] = [];
+
+let state: boolean = false;
+let floatBefore: boolean = false;
+let wasChanged: boolean = false;
 
 function calculator(type: string, value: string) {
   switch (type) {
     case 'num':
-      if (!operator) { //if we haven't set an operator
-        num_1 = write(num_1, value);
-        display.innerHTML = num_1;
-      } else {
-        num_2 = write(num_2, value);
-        display.innerHTML = num_1 + operator + num_2;
-      }
+
+      addNumbers(value);
+      render();
       break;
 
     case 'float':
-      if (!operator) {
-        num_1 = addFloat(num_1);
-        display.innerHTML = num_1;
+      if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]] || num_1[num_1.length] === 'π'){
+        return;
       }
-      else {
-        num_2 = addFloat(num_2);
-        display.innerHTML = num_1 + operator + num_2;
-      }
+      addFloat();
+      render();
       break;
 
     case 'negative_state':
-      if (!operator) {
-        num_1 = change_negative_state(num_1);
-        display.innerHTML = num_1;
-
-      } else {
-        num_2 = change_negative_state(num_2);
-        display.innerHTML = num_1 + operator + num_2;
+      if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]] || num_1[num_1.length-1] === 'π'){
+        return;
       }
+      num_1 = toNegative(num_1);
+      render();
       break;
 
     case 'operator':
-      if (!num_2) {
-        insertFirstOperator(value);
-      } else {
-        add_operator(value);
+      if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]]){
+        return;
       }
+      if(sciOper){
+        sciCalc();
+      }
+      addOperation(value);
+      render();
       break;
+
 
     case 'back':
       back();
+      render();
       break;
 
 
@@ -62,214 +76,389 @@ function calculator(type: string, value: string) {
       break;
 
     case 'eq':
-      equal();
+      if(remote){
+        remoteCalc(num_1);
+      }else{
+        equal();
+      }
       break;
 
 
   }
 }
 
-function insertFirstOperator(value: string) {
-  operator = value;
-  display.innerHTML = num_1 + operator;
-}
+function sciCalc(){
+  let lastNumRange = searchLastNumber(num_1);
+  let temp: string | number = num_1.slice(lastNumRange[0]);
+  switch(sciOper){
+    case '^':
 
+      if(remote){
+        
+      }else{
+        num_2 = Math.pow(parseFloat(num_2), parseFloat(temp)).toString();
+      }
 
-function add_operator(value: string) {// adding the operator
+      break;
+    case 'root':{
 
-  if (zero_division()) {
-    return;
+      if(remote){
+        //num_2 = remoteCalc(num_2 + '^' + '1/'+temp);
+      }else{
+      num_2 = Math.pow(parseFloat(num_2), (1/parseFloat(temp))).toString();
+     }
+      break;
+    }
+
   }
-
-  if (science && !waitingNextOper) {
-    waitingNextOper = operator;
-    num_1 = num_1 + operator + num_2;
-    num_2 = '';
-    operator = value;
-    display.innerHTML = num_1 + value;
-    return;
-  }
-  math_operation();
-
-  if (current_result < 0) {
-    num_1 = change_negative_state((current_result * -1).toString());
-  } else {
-    num_1 = current_result.toString();
-  }
-
-  resetAfterOper(value);
-}
-
-
-function equal() {
-  if (!num_2 || zero_division()) {
-    return;
-  }
-  math_operation();
-  let temp = '';
-  if (current_result < 0) {
-    temp = change_negative_state((current_result * -1).toString());
-  } else {
-    temp = current_result.toString();
-  }
-  clear();
-  display.innerHTML = temp;
-
-}
-
-function clear() {
-  display.innerHTML = '0';
-  num_1 = '0';
+  temp = num_1.slice(0, lastNumRange[0]-1);
+  lastNumRange = searchLastNumber(temp);
+  num_1 = num_1.slice(0, lastNumRange[0]) + num_2;
+  sciOper = '';
   num_2 = '';
-  operator = '';
-  waitingNextOper = '';
-  current_result = NaN;
-  calc_history = [];
-  current_result = 0;
+}
 
+
+
+function sciOperator(type: string, value:string ='') {
+  if(operators[num_1[num_1.length-1]]){
+    return;
+  }
+  switch (type) {
+    case 'square':
+      if (isNegative(num_1)) {
+        num_1 = toNegative(num_1);
+      }
+      let lastNumRange = searchLastNumber(num_1);
+      let temp: string | number = num_1.slice(lastNumRange[0]);
+      if (isFloat(temp)) {
+        temp = Math.pow(parseFloat(temp), 2).toString();
+      } else {
+        temp = Math.pow(parseInt(temp), 2).toString();
+      }
+      num_1 = num_1.slice(0, lastNumRange[0]) + temp;
+      render();
+      break;
+
+    case 'sqroot':
+      if (isNegative(num_1)) {
+        break;
+      } else {
+        let lastNumRange = searchLastNumber(num_1);
+        let temp: string | number = num_1.slice(lastNumRange[0]);
+        if (isFloat(temp)) {
+          temp = Math.sqrt(parseFloat(temp)).toString();
+        } else {
+          temp = Math.sqrt(parseInt(temp)).toString();
+        }
+        num_1 = num_1.slice(0, lastNumRange[0]) + temp;
+        render();
+      }
+      break;
+          
+    case 'addSci':{  
+      let lastNumRange = searchLastNumber(num_1);
+      let temp: string | number = num_1.slice(lastNumRange[0]);
+      if(sciOper && (num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]])){
+        temp = num_1.replace(sciOper, value);
+        num_1 = temp;
+      }else if(!sciOper){
+        num_1 += value;
+      }else{
+        return;
+      }         
+      num_2 = temp;
+      sciOper = value;
+      render();
+      break;
+    }
+  }
+}
+
+function addNumbers(value: string) {
+  if(value === 'Math.PI'){
+    value = 'π';
+  }
+  if(num_1[num_1.length-1] === 'π' && value === 'π'){
+    return;
+  } else if (num_1[num_1.length-1] === 'π' && value !== 'π'){
+    num_1 += '*';
+  }
+
+
+  if(!operators[num_1[num_1.length-1]] && value === 'π' && num_1 !== '0'){
+    num_1 += '*';
+    operCount++;
+  }
+
+  if (isNegative(num_1)) {
+    num_1 = toNegative(num_1);
+    wasChanged = !wasChanged;
+  }
+  if (num_1 === '0') {
+    num_1 = value;
+  } else if (operators[num_1[num_1.length - 2]] && num_1[num_1.length - 1] === '0') {
+    num_1 = num_1.slice(0, num_1.length - 1) + value;
+  }
+  else {
+    num_1 += value;
+  }
+  if (wasChanged) {
+    num_1 = toNegative(num_1);
+    wasChanged = !wasChanged;
+  }
+}
+
+function addOperation(value: string) {
+
+  if (operCount == 1 && !state) {
+    // need to calculate-
+    num_1 = num_1.replaceAll('π', ' Math.PI ');
+    update_history();
+    num_1 = eval(num_1);
+    operCount = 0;
+  } else if (state && operCount == 2) {
+    num_1 = num_1.replaceAll('π', ' Math.PI ');
+    update_history();
+    num_1 = eval(num_1);
+    operCount = 0;
+  }
+  if (!operators[num_1[num_1.length - 1]]) {
+    num_1 += value;
+    operCount++;
+  } else {
+    num_1 = num_1.slice(0, num_1.length - 1);
+    num_1 += value;
+  }
+  floatBefore = false;
+}
+
+function isNegative(num): boolean {
+  return num[num.length - 1] === ')';
+}
+
+function toNegative(num): string {
+  if (operators[num[num.length - 1]]) {
+    num += '0';
+  }
+  let range: number[] = searchLastNumber(num);
+  if (isNegative(num)) {
+    let tempNumMinus = num.slice(range[0] - 2, range[1] + 1);
+    let tempNumClean = tempNumMinus.slice(2, tempNumMinus.length - 1);
+    num = num.replace(tempNumMinus, tempNumClean)
+  } else {
+    let targetNum: string = num.slice(range[0]);
+    // num = num.substring(0, range[0]) + '(-' + targetNum + ')';
+    num = num.substring(0, range[0]) + '-' + targetNum;
+  }
+  return num;
+}
+function isFloat(num: string) {
+  return num.includes('.');
+}
+function addFloat() {
+  if (operators[num_1[num_1.length - 1]] || num_1[num_1.length - 1] === '.' || floatBefore) {
+    return;
+  }
+  if (isNegative(num_1)) {
+    num_1 = toNegative(num_1);
+    wasChanged = !wasChanged;
+  }
+  num_1 += '.';
+  if (wasChanged) {
+    num_1 = toNegative(num_1);
+    wasChanged = !wasChanged;
+  }
+  floatBefore = true;
+}
+
+function searchLastNumber(num) {
+  let range = [];
+  let last = num.length - 1;
+  for (let i = last; i >= 0; i--) {
+    if (operators[num[last]] || sciOperators[num[last]] || num[last] === 't') {
+      continue;
+    } else {
+      if (!range[0]) {
+        range.push(i);
+      } else {
+        if (operators[num[i]] || sciOperators[num[i]] || num[i] === 't') {
+          if (range[0] === i + 1) {
+            break;
+          }
+          range.push(i + 1);
+          break;
+        } else if (i === 0) {
+          range.push(i);
+        }
+      }
+    }
+  }
+  return range.reverse();
 }
 
 function back() {
-  if (!operator) {
-    if (num_1.includes('-')) {
-      num_1 = change_negative_state(num_1);
 
-      num_1 = num_1.slice(0, num_1.length - 1);
-      if (!num_1) {
-        num_1 = '0';
-        display.innerHTML = num_1;
-        return;
-      }
-      num_1 = change_negative_state(num_1);
-      display.innerHTML = num_1;
-    } else {
-
-      num_1 = num_1.slice(0, num_1.length - 1);
-      if (num_1 == '') {
-        num_1 = '0';
-      }
-      display.innerHTML = num_1;
+  if (operators[num_1[num_1.length - 1]]) {
+    operCount--;
+    num_1 = num_1.slice(0, num_1.length - 1);
+    if (num_1.includes('.')) {
+      floatBefore = true;
     }
-  } else if ((operator || waitingNextOper) && !num_2) {
-    if (waitingNextOper) {
-      num_2 = num_1.split(waitingNextOper)[1];
-      num_1 = num_1.split(waitingNextOper)[0];
-      operator = waitingNextOper;
-      waitingNextOper = '';
-      display.innerHTML = num_1 + operator + num_2;
-    } else {
-      operator = '';
-      display.innerHTML = num_1;
-    }
-  }
-  else {
-    if (num_2.includes('-')) {
-      num_2 = change_negative_state(num_2);
-
-      num_2 = num_2.slice(0, num_2.length - 1);
-      if (!num_2) {
-        display.innerHTML = num_1 + operator + num_2;
-        return;
-      }
-      num_2 = change_negative_state(num_2);
-      display.innerHTML = num_1 + operator + num_2;
-
-    } else {
-
-      num_2 = num_2.slice(0, num_2.length - 1);
-
-      display.innerHTML = num_1 + operator + num_2;
-    }
-  }
-}
-
-function change_negative_state(num: string) {
-
-  if (!num) {
-    num = '0';
-  }
-  if (num.includes('-')) {
-    return num.slice(2, num.length - 1);
-  } else {
-    return '(-' + num + ')';
-  }
-
-}
-
-function write(num: string, value: string) {
-  let minus = false;
-  if (num.includes('-')) {
-    minus = true;
-    num = change_negative_state(num);
-  }
-  if (num === '0' || !num) {
-    num = value;
-    if (minus) {
-      num = change_negative_state(num);
-    }
-    return num;
-  }
-  else {
-    num = num + value;
-    if (minus) {
-      num = change_negative_state(num);
-    }
-    return num
-  }
-}
-
-function addFloat(num: string) {
-  if (num.includes('.')) {
-    return num;
-  }
-  else {
-    if (!num) {
-      num = '0';
-    }
-    if (num.includes('-')) {
-      num = change_negative_state(num);
-      num += '.';
-      num = change_negative_state(num);
-    } else {
-      num += '.';
-    }
-    return num
-  }
-}
-
-
-
-function resetAfterOper(value: string) {
-  operator = value;
-  waitingNextOper = '';
-  display.innerHTML = num_1 + operator;
-  num_2 = '';
-  return;
-}
-
-
-function math_operation() {
-  current_result = parseFloat(eval(num_1 + operator + num_2));
-  update_history();
-}
-
-function zero_division() {
-  if ((num_2 === '0' || num_2 === '(-0)') && operator == '/') {
-    clear();
-    display.innerHTML = err;
-    return true;
-  }
-  return false;
-}
-
-//if a calculation happend save and display to history window
-function update_history() {
-  if (!num_2) {
     return;
   }
-  calc_history.push(num_1 + operator + num_2 + '=' + current_result);
+  if(num_1[num_1.length-1] === 't'){
+    num_1 = num_1.replace('root','');
+    sciOper = '';
+    return;
+  }else if(sciOperators[num_1[num_1.length-1]]){
+    num_1 = num_1.replace('^','');
+    sciOper = '';
+    return;
+  }
 
+  if (isNegative(num_1)) {
+    num_1 = toNegative(num_1);
+    wasChanged = !wasChanged;
+  }
+  if (num_1[num_1.length - 1] === '.') {
+    floatBefore = false;
+  }
+  num_1 = num_1.slice(0, num_1.length - 1);
+  if (wasChanged) {
+    if (num_1 && !operators[num_1[num_1.length - 1]]) {
+      num_1 = toNegative(num_1);
+    }
+    wasChanged = !wasChanged;
+  }
+  if (!num_1) {
+    num_1 = '0';
+  }
+}
+
+function reset() {
+  operCount = 0;
+  num_2 = '';
+  sciOper = '';
+  floatBefore = false;
+  wasChanged = false;
+}
+
+function clear() {
+  reset();
+  num_1 = '0';
+  let historyTitle: Element = document.getElementById('history').children[0].children[0].children[0];
+  document.getElementById('history').children[0].children[0].innerHTML = '';
+  document.getElementById('history').children[0].children[0].appendChild(historyTitle);
+  calc_history = [];
+  render();
+}
+
+function update_history() {
+  calc_history.push(num_1 + '<br>=' + eval(num_1));
   let elem = document.createElement("div");
-  elem.innerText = calc_history[calc_history.length - 1];
+  elem.innerHTML = calc_history[calc_history.length - 1];
   document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
+}
+
+function equal() {
+  num_1 = num_1.replaceAll('π', ' Math.PI ');
+  num_1 = eval(num_1).toString();
+  reset();
+  render();
+}
+
+function addSpace() {
+  let temp = '';
+  for (let i = 0; i < num_1.length; i++) {
+    if (operators[num_1[i]]) {
+      temp += ' ';
+      temp += num_1[i];
+      temp += ' ';
+      continue;
+    }
+    temp += num_1[i];
+  }
+  num_1 = temp;
+}
+
+function removeSpace() {
+  num_1 = num_1.replaceAll(' ', '');
+}
+
+function evaluate() {
+  addSpace();
+  let splitNum = num_1.split(' ');
+  let init = 0;
+  let assign = false;
+  let sum = splitNum.reduce((acc, current, index) => {
+    if (operators[current]) {
+      switch (current) {
+        case '*':
+          if (!assign) {
+            acc = '0';
+            assign = true;
+          }
+          init = parseFloat(splitNum[index - 1]);
+          init = (init * parseFloat(splitNum[index + 1]));
+          return (parseFloat(acc) + init).toString();
+        case '/':
+          if (!assign) {
+            acc = '0';
+            assign = true;
+          }
+          init = parseFloat(splitNum[index - 1]);
+          init = (init / parseFloat(splitNum[index + 1]));
+          return (parseFloat(acc) + init).toString();
+      }
+    }
+    return acc;
+  });
+  assign = false;
+  let sum2 = splitNum.reduce((acc, current, index) => {
+    if (operators[current]) {
+      switch (current) {
+        case '-':
+          if (!assign) {
+            acc = sum.toString();
+            assign = true;
+            init = 0;
+          }
+          init = (parseFloat(acc) - parseFloat(splitNum[index + 1]));
+          break;
+        case '+':
+          if (!assign) {
+            acc = init.toString();
+            assign = true;
+            init = 0;
+          }
+          init = (parseFloat(acc) + parseFloat(splitNum[index + 1]));
+          break;
+      }
+    }
+    return init.toString();
+  });
+
+  console.log();
+
+}
+
+function render() {
+  addSpace();
+  display.innerHTML = num_1;
+  removeSpace();
+}
+
+function remoteCalc(num:string){
+  //num_1 = num_1.replaceAll('π', ' math.PI ');
+  return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num),{
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response =>response.text())
+  .then(response => num = response);
+  
+  reset();
+  render();
 }

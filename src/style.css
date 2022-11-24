@@ -17,15 +17,13 @@ body{
   min-height: 600px ;
 }
 
-#history .col, #scientific .col {
+#history > .container >.col, #scientific > .container > .col {
   height: 307px;
   word-break: break-all;
 }
 
 #scientific{
   grid-area: scientific;
-  display: flex;
-  flex-direction: column;
   width: 150px;
   display: none;
   align-items: center;
@@ -70,11 +68,9 @@ body{
 }
 .col{
   border: 1px solid black;
-}
-
-.col{
   background-color: #d9e2f3 ;
 }
+
 
 #center > .col > .row > .col{
   background-color: #f2f2f2;
@@ -85,11 +81,16 @@ body{
 #left .col > .col:hover,
 #right .col > .col:hover,
 #scientific .row > .col:hover,
-#clear:hover
+#clear:hover,
+#scientific .col-large:last-child:hover
 {
   cursor: pointer;
   background-color: yellow !important;
 }
+
+
+
+
 
 #left > .col > .col, #right > .col > .col,
 #center > .col > .col,
@@ -98,16 +99,26 @@ body{
   padding: 10px;
 }
 
-#scientific > section{
-  height: 308px;
-  display: flex;
-  flex-direction: column;
+
+#scientific > .container >.col >.row{
+  min-height: 45px;
 }
+
 
 #scientific .col{
-  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
+#scientific .col-large{
+  min-height:81px;
+  max-height: 100%;
+}
+
+#scientific .col-large:last-child{
+  min-height: 90px;
+}
 #display{
   height: 46px;
   border: 3px solid black

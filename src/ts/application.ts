@@ -78,15 +78,11 @@ function toggleButtons(tag: Element) {
 
     case 'remote-calc':
       toggle_view(tag, false);
+      remote =!remote;
       break;
 
   }
 }
-
-
-
-
-
 
 
 function info() {
@@ -103,7 +99,7 @@ function toggle_view(tag: Element, should_active: boolean) {
   if (tag.classList.length < 2) {
     tag.classList.add('active');
     if (should_active) {
-      document.getElementById(tag.id.split('-')[1]).style.display = 'grid';
+      document.getElementById(tag.id.split('-')[1]).style.display = 'flex';
     }
   } else {
     tag.classList.remove('active');
@@ -113,7 +109,7 @@ function toggle_view(tag: Element, should_active: boolean) {
   }
 
   if (tag.id.split('-')[1] === 'scientific') {
-    science = !science;
+    state = !state;
     clear();
   }
 }

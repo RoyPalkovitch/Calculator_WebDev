@@ -76,25 +76,21 @@ function calculator(type: string, value: string) {
       break;
 
     case 'eq':
-      if(remote){
-        remoteCalc(num_1);
-      }else{
-        equal();
-      }
+      equal();
       break;
 
 
   }
 }
 
-function sciCalc(){
+async function sciCalc(){
   let lastNumRange = searchLastNumber(num_1);
   let temp: string | number = num_1.slice(lastNumRange[0]);
   switch(sciOper){
     case '^':
 
       if(remote){
-        
+        num_2 = await remoteCalc((parseFloat(num_2)+ '^' + parseFloat(temp)).toString());
       }else{
         num_2 = Math.pow(parseFloat(num_2), parseFloat(temp)).toString();
       }
@@ -103,7 +99,7 @@ function sciCalc(){
     case 'root':{
 
       if(remote){
-        //num_2 = remoteCalc(num_2 + '^' + '1/'+temp);
+        num_2 = await remoteCalc(num_2 + '^' + '1/'+temp);
       }else{
       num_2 = Math.pow(parseFloat(num_2), (1/parseFloat(temp))).toString();
      }
@@ -116,11 +112,12 @@ function sciCalc(){
   num_1 = num_1.slice(0, lastNumRange[0]) + num_2;
   sciOper = '';
   num_2 = '';
+  render();
 }
 
 
 
-function sciOperator(type: string, value:string ='') {
+async function sciOperator(type: string, value:string ='') {
   if(operators[num_1[num_1.length-1]]){
     return;
   }
@@ -131,12 +128,13 @@ function sciOperator(type: string, value:string ='') {
       }
       let lastNumRange = searchLastNumber(num_1);
       let temp: string | number = num_1.slice(lastNumRange[0]);
-      if (isFloat(temp)) {
+      if (remote) {
+        temp = await remoteCalc((parseFloat(temp) + '^' + 2).toString());
+      }else{
         temp = Math.pow(parseFloat(temp), 2).toString();
-      } else {
-        temp = Math.pow(parseInt(temp), 2).toString();
       }
       num_1 = num_1.slice(0, lastNumRange[0]) + temp;
+
       render();
       break;
 
@@ -146,10 +144,10 @@ function sciOperator(type: string, value:string ='') {
       } else {
         let lastNumRange = searchLastNumber(num_1);
         let temp: string | number = num_1.slice(lastNumRange[0]);
-        if (isFloat(temp)) {
-          temp = Math.sqrt(parseFloat(temp)).toString();
+        if (remote) {
+          temp = await remoteCalc('sqrt(' + parseFloat(temp).toString() + ')' );
         } else {
-          temp = Math.sqrt(parseInt(temp)).toString();
+          temp = Math.sqrt(parseFloat(temp)).toString();
         }
         num_1 = num_1.slice(0, lastNumRange[0]) + temp;
         render();
@@ -209,18 +207,27 @@ function addNumbers(value: string) {
   }
 }
 
-function addOperation(value: string) {
+async function addOperation(value: string) {
 
   if (operCount == 1 && !state) {
-    // need to calculate-
-    num_1 = num_1.replaceAll('π', ' Math.PI ');
+    if (remote) {
+      num_1 = num_1.replaceAll('π', ' PI ');
+      num_1 = await remoteCalc(num_1);
+    } else {
+      num_1 = num_1.replaceAll('π', ' Math.PI ');
+      num_1 = eval(num_1);
+    }
     update_history();
-    num_1 = eval(num_1);
     operCount = 0;
   } else if (state && operCount == 2) {
-    num_1 = num_1.replaceAll('π', ' Math.PI ');
+    if (remote) {
+      num_1 = num_1.replaceAll('π', ' PI ');
+      num_1 = await remoteCalc(num_1);
+    } else {
+      num_1 = num_1.replaceAll('π', ' Math.PI ');
+      num_1 = eval(num_1);
+    }
     update_history();
-    num_1 = eval(num_1);
     operCount = 0;
   }
   if (!operators[num_1[num_1.length - 1]]) {
@@ -253,9 +260,11 @@ function toNegative(num): string {
   }
   return num;
 }
+
 function isFloat(num: string) {
   return num.includes('.');
 }
+
 function addFloat() {
   if (operators[num_1[num_1.length - 1]] || num_1[num_1.length - 1] === '.' || floatBefore) {
     return;
@@ -361,9 +370,15 @@ function update_history() {
   document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
 }
 
-function equal() {
-  num_1 = num_1.replaceAll('π', ' Math.PI ');
-  num_1 = eval(num_1).toString();
+async function equal() {
+  if(remote){
+    num_1 = num_1.replaceAll('π', ' PI ');
+    num_1 = await remoteCalc(num_1);
+  }else{
+    num_1 = num_1.replaceAll('π', ' Math.PI ');
+    num_1 = eval(num_1).toString();
+  }
+
   reset();
   render();
 }
@@ -449,16 +464,16 @@ function render() {
   removeSpace();
 }
 
-function remoteCalc(num:string){
+async function remoteCalc(num:string){
   //num_1 = num_1.replaceAll('π', ' math.PI ');
+  document.body.style.pointerEvents= 'none';
   return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num),{
     headers: {
       'Content-Type': 'application/json',
     },
   })
-  .then(response =>response.text())
-  .then(response => num = response);
-  
-  reset();
-  render();
+  .then(response => response.text())
+  .then(response => response).finally( () =>
+   document.body.style.pointerEvents= ''
+  );
 }

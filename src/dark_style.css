@@ -17,7 +17,9 @@ body.dark #center > .col > .row > .col{
 body.dark .col > .row :hover, 
 body.dark #left .col > .col:hover,
 body.dark #right .col > .col:hover,
-body.dark #clear:hover
+body.dark #clear:hover,
+#scientific .row > .col:hover,
+#scientific .col-large:last-child:hover
 {
   background-color: #382222 !important;
 }

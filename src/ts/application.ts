@@ -12,7 +12,7 @@ const buttonsLeft = () => {
 };
 
 const buttonsCenter = () => {
-  let buttonArrayCenter = document.getElementById('center').children[0].children;
+  let buttonArrayCenter:HTMLCollection = document.getElementById('center').children[0].children;
   for (let i = 2; i < buttonArrayCenter.length; i++) {
     if (i === 2) {
       buttonArrayCenter[i].addEventListener('click', (e) => {
@@ -84,9 +84,12 @@ function toggleButtons(tag: Element) {
   }
 }
 
+document.getElementById('exit').addEventListener('click',(e) =>{
+  e.target.parentElement.parentElement.style.display = 'none';
+});
 
 function info() {
-  alert('Developer: Roy Palkovitch\nVersion: 0.01\n Calculator for WebDev program');
+  document.getElementById('popup').style.display ='flex';
 }
 
 function toggle_theme(tag: Element) {

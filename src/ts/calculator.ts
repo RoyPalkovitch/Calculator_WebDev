@@ -3,8 +3,8 @@ const display: Element = document.getElementById('display');
 const ERR: string = 'Error';
 display.innerHTML = '0';
 let remote = false;
-let num_1: string = '0';//first number displayed
-
+let num_1: string= '0';//first number displayed
+let eq = false;
 const operators: { '*': string, '/': string, '-': string, '+': string, '%':string } = {
   '*': '*',
   '/': '/',
@@ -174,6 +174,10 @@ async function sciOperator(type: string, value:string ='') {
 }
 
 function addNumbers(value: string) {
+  if(eq){
+    num_1= '0';
+    eq = false;
+  }
   if(value === 'Math.PI'){
     value = 'π';
   }
@@ -210,6 +214,8 @@ function addNumbers(value: string) {
 async function addOperation(value: string) {
 
   if (operCount == 1 && !state) {
+    eq = true;
+    update_history(true);
     if (remote) {
       num_1 = num_1.replaceAll('π', ' PI ');
       num_1 = await remoteCalc(num_1);
@@ -217,9 +223,11 @@ async function addOperation(value: string) {
       num_1 = num_1.replaceAll('π', ' Math.PI ');
       num_1 = eval(num_1);
     }
-    update_history();
+    update_history(false);
     operCount = 0;
   } else if (state && operCount == 2) {
+    eq = true;
+    update_history(true);
     if (remote) {
       num_1 = num_1.replaceAll('π', ' PI ');
       num_1 = await remoteCalc(num_1);
@@ -227,24 +235,26 @@ async function addOperation(value: string) {
       num_1 = num_1.replaceAll('π', ' Math.PI ');
       num_1 = eval(num_1);
     }
-    update_history();
+    update_history(false);
     operCount = 0;
   }
   if (!operators[num_1[num_1.length - 1]]) {
+    eq = false;
     num_1 += value;
     operCount++;
   } else {
+    eq = false;
     num_1 = num_1.slice(0, num_1.length - 1);
     num_1 += value;
   }
   floatBefore = false;
 }
 
-function isNegative(num): boolean {
+function isNegative(num:string): boolean {
   return num[num.length - 1] === ')';
 }
 
-function toNegative(num): string {
+function toNegative(num:string): string {
   if (operators[num[num.length - 1]]) {
     num += '0';
   }
@@ -255,7 +265,6 @@ function toNegative(num): string {
     num = num.replace(tempNumMinus, tempNumClean)
   } else {
     let targetNum: string = num.slice(range[0]);
-    // num = num.substring(0, range[0]) + '(-' + targetNum + ')';
     num = num.substring(0, range[0]) + '-' + targetNum;
   }
   return num;
@@ -281,10 +290,10 @@ function addFloat() {
   floatBefore = true;
 }
 
-function searchLastNumber(num) {
-  let range = [];
-  let last = num.length - 1;
-  for (let i = last; i >= 0; i--) {
+function searchLastNumber(num:string) {
+  let range: number[] = [];
+  let last: number = num.length - 1;
+  for (let i:number = last; i >= 0; i--) {
     if (operators[num[last]] || sciOperators[num[last]] || num[last] === 't') {
       continue;
     } else {
@@ -363,14 +372,19 @@ function clear() {
   render();
 }
 
-function update_history() {
-  calc_history.push(num_1 + '<br>=' + eval(num_1));
-  let elem = document.createElement("div");
-  elem.innerHTML = calc_history[calc_history.length - 1];
-  document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
+function update_history(createNew:Boolean) {
+  if(createNew){
+    let elem:Element = document.createElement("div");
+    elem.innerHTML = num_1;
+    document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
+  }else{
+    document.getElementById('history').childNodes[1].childNodes[1].lastElementChild.innerHTML += '<br>='+ num_1;
+  }
 }
 
 async function equal() {
+  update_history(true);
+  eq = true;
   if(remote){
     num_1 = num_1.replaceAll('π', ' PI ');
     num_1 = await remoteCalc(num_1);
@@ -378,13 +392,14 @@ async function equal() {
     num_1 = num_1.replaceAll('π', ' Math.PI ');
     num_1 = eval(num_1).toString();
   }
+  update_history(false);
 
   reset();
   render();
 }
 
 function addSpace() {
-  let temp = '';
+  let temp:string = '';
   for (let i = 0; i < num_1.length; i++) {
     if (operators[num_1[i]]) {
       temp += ' ';
@@ -401,71 +416,13 @@ function removeSpace() {
   num_1 = num_1.replaceAll(' ', '');
 }
 
-function evaluate() {
-  addSpace();
-  let splitNum = num_1.split(' ');
-  let init = 0;
-  let assign = false;
-  let sum = splitNum.reduce((acc, current, index) => {
-    if (operators[current]) {
-      switch (current) {
-        case '*':
-          if (!assign) {
-            acc = '0';
-            assign = true;
-          }
-          init = parseFloat(splitNum[index - 1]);
-          init = (init * parseFloat(splitNum[index + 1]));
-          return (parseFloat(acc) + init).toString();
-        case '/':
-          if (!assign) {
-            acc = '0';
-            assign = true;
-          }
-          init = parseFloat(splitNum[index - 1]);
-          init = (init / parseFloat(splitNum[index + 1]));
-          return (parseFloat(acc) + init).toString();
-      }
-    }
-    return acc;
-  });
-  assign = false;
-  let sum2 = splitNum.reduce((acc, current, index) => {
-    if (operators[current]) {
-      switch (current) {
-        case '-':
-          if (!assign) {
-            acc = sum.toString();
-            assign = true;
-            init = 0;
-          }
-          init = (parseFloat(acc) - parseFloat(splitNum[index + 1]));
-          break;
-        case '+':
-          if (!assign) {
-            acc = init.toString();
-            assign = true;
-            init = 0;
-          }
-          init = (parseFloat(acc) + parseFloat(splitNum[index + 1]));
-          break;
-      }
-    }
-    return init.toString();
-  });
-
-  console.log();
-
-}
-
 function render() {
   addSpace();
   display.innerHTML = num_1;
   removeSpace();
 }
 
-async function remoteCalc(num:string){
-  //num_1 = num_1.replaceAll('π', ' math.PI ');
+async function remoteCalc(num:string):Promise<string>{
   document.body.style.pointerEvents= 'none';
   return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num),{
     headers: {
@@ -473,7 +430,6 @@ async function remoteCalc(num:string){
     },
   })
   .then(response => response.text())
-  .then(response => response).finally( () =>
-   document.body.style.pointerEvents= ''
-  );
+  .then(response => response)
+  .finally( () => document.body.style.pointerEvents= '');
 }

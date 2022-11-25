@@ -2,7 +2,12 @@
   body{
     display: flex;
     flex-direction: column;
-
+    margin-top: 30px;
+  }
+  #popup{
+    position: absolute;
+    top:3px;
+    height: min-content;
   }
   #main{
     margin:auto;

@@ -76,7 +76,10 @@ function calculator(type: string, value: string) {
       break;
 
     case 'eq':
-      equal();
+      if(sciOper){
+        sciCalc();
+      }
+        equal();
       break;
 
 

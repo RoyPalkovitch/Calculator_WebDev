@@ -18,8 +18,8 @@ body.dark .col > .row :hover,
 body.dark #left .col > .col:hover,
 body.dark #right .col > .col:hover,
 body.dark #clear:hover,
-#scientific .row > .col:hover,
-#scientific .col-large:last-child:hover
+body.dark #scientific .row > .col:hover,
+body.dark #scientific .col-large:last-child:hover
 {
   background-color: #382222 !important;
 }

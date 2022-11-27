@@ -1,4 +1,3 @@
-
 const display: Element = document.getElementById('display');
 const ERR: string = 'Error';
 display.innerHTML = '0';
@@ -376,12 +375,13 @@ function clear() {
 }
 
 function update_history(createNew:Boolean) {
+  const history = document.getElementById('history').children[0].children[0];
   if(createNew){
     let elem:Element = document.createElement("div");
     elem.innerHTML = num_1;
-    document.getElementById('history').childNodes[1].childNodes[1].appendChild(elem);
+    history.appendChild(elem);
   }else{
-    document.getElementById('history').childNodes[1].childNodes[1].lastElementChild.innerHTML += '<br>='+ num_1;
+    history.children[history.children.length-1];
   }
 }
 

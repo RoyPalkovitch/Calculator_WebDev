@@ -84,7 +84,7 @@ function toggleButtons(tag: Element) {
   }
 }
 
-document.getElementById('exit').addEventListener('click',(e) =>{
+document.getElementById('exit').addEventListener('click',(e: MouseEvent) =>{
   e.target.parentElement.parentElement.style.display = 'none';
 });
 

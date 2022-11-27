@@ -1,9 +1,15 @@
 const display: Element = document.getElementById('display');
+
 const ERR: string = 'Error';
 display.innerHTML = '0';
+
 let remote = false;
+
 let num_1: string= '0';//first number displayed
+
 let eq = false;
+
+
 const operators: { '*': string, '/': string, '-': string, '+': string, '%':string } = {
   '*': '*',
   '/': '/',
@@ -12,6 +18,7 @@ const operators: { '*': string, '/': string, '-': string, '+': string, '%':strin
   '%': '%'
 };
 
+
 const sciOperators: { '^': string, 'root': string } = {
   '^': '^',
   'root': 'root'
@@ -19,14 +26,21 @@ const sciOperators: { '^': string, 'root': string } = {
 
 
 let num_2 = '';
+
 let sciOper = '';
+
 let operCount: number = 0;
+
 
 let calc_history: string[] = [];
 
+
 let state: boolean = false;
+
 let floatBefore: boolean = false;
+
 let wasChanged: boolean = false;
+
 
 function calculator(type: string, value: string) {
   switch (type) {
@@ -44,6 +58,7 @@ function calculator(type: string, value: string) {
       render();
       break;
 
+
     case 'negative_state':
       if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]] || num_1[num_1.length-1] === 'π'){
         return;
@@ -51,6 +66,7 @@ function calculator(type: string, value: string) {
       num_1 = toNegative(num_1);
       render();
       break;
+
 
     case 'operator':
       if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]]){
@@ -74,6 +90,7 @@ function calculator(type: string, value: string) {
       clear();
       break;
 
+
     case 'eq':
       if(sciOper){
         sciCalc();
@@ -84,6 +101,7 @@ function calculator(type: string, value: string) {
 
   }
 }
+
 
 async function sciCalc(){
   let lastNumRange = searchLastNumber(num_1);
@@ -109,6 +127,7 @@ async function sciCalc(){
     }
 
   }
+
   temp = num_1.slice(0, lastNumRange[0]-1);
   lastNumRange = searchLastNumber(temp);
   num_1 = num_1.slice(0, lastNumRange[0]) + num_2;
@@ -116,6 +135,7 @@ async function sciCalc(){
   num_2 = '';
   render();
 }
+
 
 
 
@@ -175,6 +195,7 @@ async function sciOperator(type: string, value:string ='') {
   }
 }
 
+
 function addNumbers(value: string) {
   if(eq){
     num_1= '0';
@@ -212,6 +233,7 @@ function addNumbers(value: string) {
     wasChanged = !wasChanged;
   }
 }
+
 
 async function addOperation(value: string) {
 
@@ -252,9 +274,11 @@ async function addOperation(value: string) {
   floatBefore = false;
 }
 
+
 function isNegative(num:string): boolean {
   return num[num.length - 1] === ')';
 }
+
 
 function toNegative(num:string): string {
   if (operators[num[num.length - 1]]) {
@@ -272,9 +296,11 @@ function toNegative(num:string): string {
   return num;
 }
 
+
 function isFloat(num: string) {
   return num.includes('.');
 }
+
 
 function addFloat() {
   if (operators[num_1[num_1.length - 1]] || num_1[num_1.length - 1] === '.' || floatBefore) {
@@ -291,6 +317,7 @@ function addFloat() {
   }
   floatBefore = true;
 }
+
 
 function searchLastNumber(num:string) {
   let range: number[] = [];
@@ -316,6 +343,7 @@ function searchLastNumber(num:string) {
   }
   return range.reverse();
 }
+
 
 function back() {
 
@@ -356,6 +384,7 @@ function back() {
   }
 }
 
+
 function reset() {
   operCount = 0;
   num_2 = '';
@@ -363,6 +392,7 @@ function reset() {
   floatBefore = false;
   wasChanged = false;
 }
+
 
 function clear() {
   reset();
@@ -374,6 +404,7 @@ function clear() {
   render();
 }
 
+
 function update_history(createNew:Boolean) {
   const history = document.getElementById('history').children[0].children[0];
   if(createNew){
@@ -384,6 +415,7 @@ function update_history(createNew:Boolean) {
     history.children[history.children.length-1];
   }
 }
+
 
 async function equal() {
   update_history(true);
@@ -401,6 +433,7 @@ async function equal() {
   render();
 }
 
+
 function addSpace() {
   let temp:string = '';
   for (let i = 0; i < num_1.length; i++) {
@@ -415,15 +448,18 @@ function addSpace() {
   num_1 = temp;
 }
 
+
 function removeSpace() {
   num_1 = num_1.replaceAll(' ', '');
 }
+
 
 function render() {
   addSpace();
   display.innerHTML = num_1;
   removeSpace();
 }
+
 
 async function remoteCalc(num:string):Promise<string>{
   document.body.style.pointerEvents= 'none';

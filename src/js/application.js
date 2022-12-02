@@ -81,7 +81,7 @@ function toggleButtons(tag) {
     }
 }
 document.getElementById('exit').addEventListener('click', (e) => {
-    e.target.parentElement.parentElement.style.display = 'none';
+    e.target.parentNode.parentNode.style.display = 'none';
 });
 function info() {
     document.getElementById('popup').style.display = 'flex';

@@ -1,14 +1,8 @@
-const display: Element = document.getElementById('display');
 
-const ERR: string = 'Error';
-display.innerHTML = '0';
-
-let remote = false;
-
-let num_1: string= '0';//first number displayed
-
-let eq = false;
-
+const sciOperators: { '^': string, 'root': string } = {
+  '^': '^',
+  'root': 'root'
+};
 
 const operators: { '*': string, '/': string, '-': string, '+': string, '%':string } = {
   '*': '*',
@@ -19,21 +13,24 @@ const operators: { '*': string, '/': string, '-': string, '+': string, '%':strin
 };
 
 
-const sciOperators: { '^': string, 'root': string } = {
-  '^': '^',
-  'root': 'root'
-};
+const display: Element = document.getElementById('display');
 
+const ERR: string = 'Error';
+display.innerHTML = '0';
 
-let num_2 = '';
+let remote:boolean = false;
 
-let sciOper = '';
+let num_1: string= '0';//first number displayed
+
+let eq: boolean = false;
+
+let num_2: string = '';
+
+let sciOper: string = '';
 
 let operCount: number = 0;
 
-
 let calc_history: string[] = [];
-
 
 let state: boolean = false;
 
@@ -104,7 +101,7 @@ function calculator(type: string, value: string) {
 
 
 async function sciCalc(){
-  let lastNumRange = searchLastNumber(num_1);
+  let lastNumRange:number[] = searchLastNumber(num_1);
   let temp: string | number = num_1.slice(lastNumRange[0]);
   switch(sciOper){
     case '^':
@@ -148,7 +145,7 @@ async function sciOperator(type: string, value:string ='') {
       if (isNegative(num_1)) {
         num_1 = toNegative(num_1);
       }
-      let lastNumRange = searchLastNumber(num_1);
+      let lastNumRange:number[] = searchLastNumber(num_1);
       let temp: string | number = num_1.slice(lastNumRange[0]);
       if (remote) {
         temp = await remoteCalc((parseFloat(temp) + '^' + 2).toString());
@@ -164,7 +161,7 @@ async function sciOperator(type: string, value:string ='') {
       if (isNegative(num_1)) {
         break;
       } else {
-        let lastNumRange = searchLastNumber(num_1);
+        let lastNumRange:number[] = searchLastNumber(num_1);
         let temp: string | number = num_1.slice(lastNumRange[0]);
         if (remote) {
           temp = await remoteCalc('sqrt(' + parseFloat(temp).toString() + ')' );
@@ -177,7 +174,7 @@ async function sciOperator(type: string, value:string ='') {
       break;
           
     case 'addSci':{  
-      let lastNumRange = searchLastNumber(num_1);
+      let lastNumRange:number[] = searchLastNumber(num_1);
       let temp: string | number = num_1.slice(lastNumRange[0]);
       if(sciOper && (num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]])){
         temp = num_1.replace(sciOper, value);
@@ -286,8 +283,8 @@ function toNegative(num:string): string {
   }
   let range: number[] = searchLastNumber(num);
   if (isNegative(num)) {
-    let tempNumMinus = num.slice(range[0] - 2, range[1] + 1);
-    let tempNumClean = tempNumMinus.slice(2, tempNumMinus.length - 1);
+    let tempNumMinus:string = num.slice(range[0] - 2, range[1] + 1);
+    let tempNumClean:string = tempNumMinus.slice(2, tempNumMinus.length - 1);
     num = num.replace(tempNumMinus, tempNumClean)
   } else {
     let targetNum: string = num.slice(range[0]);
@@ -297,7 +294,7 @@ function toNegative(num:string): string {
 }
 
 
-function isFloat(num: string) {
+function isFloat(num: string):boolean {
   return num.includes('.');
 }
 
@@ -319,7 +316,7 @@ function addFloat() {
 }
 
 
-function searchLastNumber(num:string) {
+function searchLastNumber(num:string):number[] {
   let range: number[] = [];
   let last: number = num.length - 1;
   for (let i:number = last; i >= 0; i--) {
@@ -406,13 +403,13 @@ function clear() {
 
 
 function update_history(createNew:Boolean) {
-  const history = document.getElementById('history').children[0].children[0];
+  const history:Element = document.getElementById('history').children[0].children[0];
   if(createNew){
     let elem:Element = document.createElement("div");
     elem.innerHTML = num_1;
     history.appendChild(elem);
   }else{
-    history.children[history.children.length-1];
+    history.children[history.children.length-1].innerHTML += num_1;
   }
 }
 

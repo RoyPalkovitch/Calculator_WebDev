@@ -89,7 +89,7 @@ function toggleButtons(tag: Element) {
 }
 
 document.getElementById('exit').addEventListener('click',(e: MouseEvent) =>{
-  e.target.parentElement.parentElement.style.display = 'none';
+  e.target.parentNode.parentNode.style.display = 'none';
 });
 
 

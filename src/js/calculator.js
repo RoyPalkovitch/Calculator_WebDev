@@ -1,9 +1,7 @@
-const display = document.getElementById('display');
-const ERR = 'Error';
-display.innerHTML = '0';
-let remote = false;
-let num_1 = '0'; //first number displayed
-let eq = false;
+const sciOperators = {
+    '^': '^',
+    'root': 'root'
+};
 const operators = {
     '*': '*',
     '/': '/',
@@ -11,10 +9,12 @@ const operators = {
     '+': '+',
     '%': '%'
 };
-const sciOperators = {
-    '^': '^',
-    'root': 'root'
-};
+const display = document.getElementById('display');
+const ERR = 'Error';
+display.innerHTML = '0';
+let remote = false;
+let num_1 = '0'; //first number displayed
+let eq = false;
 let num_2 = '';
 let sciOper = '';
 let operCount = 0;
@@ -355,7 +355,7 @@ function update_history(createNew) {
         history.appendChild(elem);
     }
     else {
-        history.children[history.children.length - 1];
+        history.children[history.children.length - 1].innerHTML += num_1;
     }
 }
 async function equal() {
@@ -396,11 +396,7 @@ function render() {
 }
 async function remoteCalc(num) {
     document.body.style.pointerEvents = 'none';
-    return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num), {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
+    return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num))
         .then(response => response.text())
         .then(response => response)
         .finally(() => document.body.style.pointerEvents = '');

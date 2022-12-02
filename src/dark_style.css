@@ -8,6 +8,7 @@ body.dark .col{
   background-color: #3d3b3b ;
 }
 
+
 body.dark #center > .col > .row > .col{
   background-color: #707681;
   font-weight: bold;

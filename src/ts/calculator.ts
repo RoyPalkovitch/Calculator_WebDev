@@ -4,6 +4,8 @@ const sciOperators: { '^': string, 'root': string } = {
   'root': 'root'
 };
 
+
+
 const operators: { '*': string, '/': string, '-': string, '+': string, '%':string } = {
   '*': '*',
   '/': '/',

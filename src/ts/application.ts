@@ -65,6 +65,7 @@ const buttonsRight = () => {
 
 
 
+
 function toggleButtons(tag: Element) {
   switch (tag.id) {
     case 'show-info':

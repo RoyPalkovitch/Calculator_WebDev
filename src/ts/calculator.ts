@@ -1,9 +1,9 @@
-const display: Element = document.getElementById('display');
-const ERR: string = 'Error';
-display.innerHTML = '0';
-let remote = false;
-let num_1: string= '0';//first number displayed
-let eq = false;
+
+const sciOperators: { '^': string, 'root': string } = {
+  '^': '^',
+  'root': 'root'
+};
+
 const operators: { '*': string, '/': string, '-': string, '+': string, '%':string } = {
   '*': '*',
   '/': '/',
@@ -12,21 +12,32 @@ const operators: { '*': string, '/': string, '-': string, '+': string, '%':strin
   '%': '%'
 };
 
-const sciOperators: { '^': string, 'root': string } = {
-  '^': '^',
-  'root': 'root'
-};
 
+const display: Element = document.getElementById('display');
 
-let num_2 = '';
-let sciOper = '';
+const ERR: string = 'Error';
+display.innerHTML = '0';
+
+let remote:boolean = false;
+
+let num_1: string= '0';//first number displayed
+
+let eq: boolean = false;
+
+let num_2: string = '';
+
+let sciOper: string = '';
+
 let operCount: number = 0;
 
 let calc_history: string[] = [];
 
 let state: boolean = false;
+
 let floatBefore: boolean = false;
+
 let wasChanged: boolean = false;
+
 
 function calculator(type: string, value: string) {
   switch (type) {
@@ -44,6 +55,7 @@ function calculator(type: string, value: string) {
       render();
       break;
 
+
     case 'negative_state':
       if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]] || num_1[num_1.length-1] === 'π'){
         return;
@@ -51,6 +63,7 @@ function calculator(type: string, value: string) {
       num_1 = toNegative(num_1);
       render();
       break;
+
 
     case 'operator':
       if(num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]]){
@@ -74,6 +87,7 @@ function calculator(type: string, value: string) {
       clear();
       break;
 
+
     case 'eq':
       if(sciOper){
         sciCalc();
@@ -85,8 +99,9 @@ function calculator(type: string, value: string) {
   }
 }
 
+
 async function sciCalc(){
-  let lastNumRange = searchLastNumber(num_1);
+  let lastNumRange:number[] = searchLastNumber(num_1);
   let temp: string | number = num_1.slice(lastNumRange[0]);
   switch(sciOper){
     case '^':
@@ -109,6 +124,7 @@ async function sciCalc(){
     }
 
   }
+
   temp = num_1.slice(0, lastNumRange[0]-1);
   lastNumRange = searchLastNumber(temp);
   num_1 = num_1.slice(0, lastNumRange[0]) + num_2;
@@ -116,6 +132,7 @@ async function sciCalc(){
   num_2 = '';
   render();
 }
+
 
 
 
@@ -128,7 +145,7 @@ async function sciOperator(type: string, value:string ='') {
       if (isNegative(num_1)) {
         num_1 = toNegative(num_1);
       }
-      let lastNumRange = searchLastNumber(num_1);
+      let lastNumRange:number[] = searchLastNumber(num_1);
       let temp: string | number = num_1.slice(lastNumRange[0]);
       if (remote) {
         temp = await remoteCalc((parseFloat(temp) + '^' + 2).toString());
@@ -144,7 +161,7 @@ async function sciOperator(type: string, value:string ='') {
       if (isNegative(num_1)) {
         break;
       } else {
-        let lastNumRange = searchLastNumber(num_1);
+        let lastNumRange:number[] = searchLastNumber(num_1);
         let temp: string | number = num_1.slice(lastNumRange[0]);
         if (remote) {
           temp = await remoteCalc('sqrt(' + parseFloat(temp).toString() + ')' );
@@ -157,7 +174,7 @@ async function sciOperator(type: string, value:string ='') {
       break;
           
     case 'addSci':{  
-      let lastNumRange = searchLastNumber(num_1);
+      let lastNumRange:number[] = searchLastNumber(num_1);
       let temp: string | number = num_1.slice(lastNumRange[0]);
       if(sciOper && (num_1[num_1.length-1] === 't' || sciOperators[num_1[num_1.length-1]])){
         temp = num_1.replace(sciOper, value);
@@ -174,6 +191,7 @@ async function sciOperator(type: string, value:string ='') {
     }
   }
 }
+
 
 function addNumbers(value: string) {
   if(eq){
@@ -212,6 +230,7 @@ function addNumbers(value: string) {
     wasChanged = !wasChanged;
   }
 }
+
 
 async function addOperation(value: string) {
 
@@ -252,9 +271,11 @@ async function addOperation(value: string) {
   floatBefore = false;
 }
 
+
 function isNegative(num:string): boolean {
   return num[num.length - 1] === ')';
 }
+
 
 function toNegative(num:string): string {
   if (operators[num[num.length - 1]]) {
@@ -262,8 +283,8 @@ function toNegative(num:string): string {
   }
   let range: number[] = searchLastNumber(num);
   if (isNegative(num)) {
-    let tempNumMinus = num.slice(range[0] - 2, range[1] + 1);
-    let tempNumClean = tempNumMinus.slice(2, tempNumMinus.length - 1);
+    let tempNumMinus:string = num.slice(range[0] - 2, range[1] + 1);
+    let tempNumClean:string = tempNumMinus.slice(2, tempNumMinus.length - 1);
     num = num.replace(tempNumMinus, tempNumClean)
   } else {
     let targetNum: string = num.slice(range[0]);
@@ -272,9 +293,11 @@ function toNegative(num:string): string {
   return num;
 }
 
-function isFloat(num: string) {
+
+function isFloat(num: string):boolean {
   return num.includes('.');
 }
+
 
 function addFloat() {
   if (operators[num_1[num_1.length - 1]] || num_1[num_1.length - 1] === '.' || floatBefore) {
@@ -292,7 +315,8 @@ function addFloat() {
   floatBefore = true;
 }
 
-function searchLastNumber(num:string) {
+
+function searchLastNumber(num:string):number[] {
   let range: number[] = [];
   let last: number = num.length - 1;
   for (let i:number = last; i >= 0; i--) {
@@ -316,6 +340,7 @@ function searchLastNumber(num:string) {
   }
   return range.reverse();
 }
+
 
 function back() {
 
@@ -356,6 +381,7 @@ function back() {
   }
 }
 
+
 function reset() {
   operCount = 0;
   num_2 = '';
@@ -363,6 +389,7 @@ function reset() {
   floatBefore = false;
   wasChanged = false;
 }
+
 
 function clear() {
   reset();
@@ -374,16 +401,18 @@ function clear() {
   render();
 }
 
+
 function update_history(createNew:Boolean) {
-  const history = document.getElementById('history').children[0].children[0];
+  const history:Element = document.getElementById('history').children[0].children[0];
   if(createNew){
     let elem:Element = document.createElement("div");
     elem.innerHTML = num_1;
     history.appendChild(elem);
   }else{
-    history.children[history.children.length-1];
+    history.children[history.children.length-1].innerHTML += num_1;
   }
 }
+
 
 async function equal() {
   update_history(true);
@@ -401,6 +430,7 @@ async function equal() {
   render();
 }
 
+
 function addSpace() {
   let temp:string = '';
   for (let i = 0; i < num_1.length; i++) {
@@ -415,9 +445,11 @@ function addSpace() {
   num_1 = temp;
 }
 
+
 function removeSpace() {
   num_1 = num_1.replaceAll(' ', '');
 }
+
 
 function render() {
   addSpace();
@@ -425,13 +457,10 @@ function render() {
   removeSpace();
 }
 
+
 async function remoteCalc(num:string):Promise<string>{
   document.body.style.pointerEvents= 'none';
-  return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num),{
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num))
   .then(response => response.text())
   .then(response => response)
   .finally( () => document.body.style.pointerEvents= '');

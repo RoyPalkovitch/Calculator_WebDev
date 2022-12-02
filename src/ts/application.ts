@@ -1,4 +1,5 @@
 let science: boolean = false;
+ 
 
 const buttonsLeft = () => {
   let buttonArrayLeft: HTMLCollection = document.getElementById('left').children[0].children;
@@ -10,6 +11,7 @@ const buttonsLeft = () => {
     }
   }
 };
+
 
 const buttonsCenter = () => {
   let buttonArrayCenter:HTMLCollection = document.getElementById('center').children[0].children;
@@ -40,6 +42,7 @@ const buttonsCenter = () => {
   };
 };
 
+
 const buttonsRight = () => {
   let buttonArrayRight: HTMLCollection = document.getElementById('right').children[0].children;
   for (let i = 1; i < buttonArrayRight.length; i++) {
@@ -59,6 +62,7 @@ const buttonsRight = () => {
 
   }
 };
+
 
 
 function toggleButtons(tag: Element) {
@@ -85,17 +89,20 @@ function toggleButtons(tag: Element) {
 }
 
 document.getElementById('exit').addEventListener('click',(e: MouseEvent) =>{
-  e.target.parentElement.parentElement.style.display = 'none';
+  e.target.parentNode.parentNode.style.display = 'none';
 });
+
 
 function info() {
   document.getElementById('popup').style.display ='flex';
 }
 
+
 function toggle_theme(tag: Element) {
   document.getElementById('display').classList.toggle('active');
   tag.classList.toggle('active');
 }
+
 
 
 function toggle_view(tag: Element, should_active: boolean) {
@@ -117,6 +124,7 @@ function toggle_view(tag: Element, should_active: boolean) {
   }
 }
 
+
 function changeSettings() {
   let query: string | string[] = window.location.search.split('&');
   if (query) {
@@ -135,6 +143,8 @@ function changeSettings() {
     }
   }
 }
+
+
 addEventListener('DOMContentLoaded', () => {
   changeSettings();
   buttonsLeft();

@@ -461,7 +461,7 @@ function render() {
 
 async function remoteCalc(num:string):Promise<string>{
   document.body.style.pointerEvents= 'none';
-  return fetch('http://api.mathjs.org/v4/?expr=' + encodeURIComponent(num))
+  return fetch('https://api.mathjs.org/v4/?expr=' + encodeURIComponent(num))
   .then(response => response.text())
   .then(response => response)
   .finally( () => document.body.style.pointerEvents= '');

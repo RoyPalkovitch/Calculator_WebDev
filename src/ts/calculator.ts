@@ -233,6 +233,12 @@ function addNumbers(value: string) {
 
 
 async function addOperation(value: string) {
+  if (operators[num_1[num_1.length - 1]]) {
+    eq = false;
+    num_1 = num_1.slice(0, num_1.length - 1);
+    num_1 += value;
+    return;
+  }
 
   if (operCount == 1 && !state) {
     eq = true;
@@ -259,15 +265,10 @@ async function addOperation(value: string) {
     update_history(false);
     operCount = 0;
   }
-  if (!operators[num_1[num_1.length - 1]]) {
-    eq = false;
-    num_1 += value;
-    operCount++;
-  } else {
-    eq = false;
-    num_1 = num_1.slice(0, num_1.length - 1);
-    num_1 += value;
-  }
+  eq = false;
+  num_1 += value;
+  operCount++;
+
   floatBefore = false;
 }
 
